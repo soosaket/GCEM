@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --color-iitm-maroon: #800000;
+  --color-iitm-gold: #FFD700;
+  --color-iitm-gray: #f4f4f4;
+  --font-sans: Inter, sans-serif;
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(100%);
+    }
+
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  --animate-marquee: marquee 25s linear infinite;
+}
