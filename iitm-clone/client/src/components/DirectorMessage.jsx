@@ -1,58 +1,80 @@
 import React from 'react';
 
 const DirectorMessage = () => {
+    const [content, setContent] = React.useState({
+        title: "Message from the Director",
+        body: "Greetings to all! It is with great pleasure that I write this in the capacity of the Director of this prestigious institute. I thank all the faculty members, students, and staff of GCEM for their continuing efforts every day in keeping this distinguished institute of national importance at the top of the ranking scales, year after year.",
+        subtitle: "Prof. V. Kamakoti",
+        image: "https://upload.wikimedia.org/wikipedia/commons/e/e6/V_Kamakoti.jpg"
+    });
+
+    React.useEffect(() => {
+        const fetchContent = async () => {
+            try {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/content/director`);
+                const data = await res.json();
+                if (data && (data.title || data.body || (data.images && data.images.length > 0))) {
+                    setContent({
+                        title: data.title || "Message from the Director",
+                        body: data.body || "",
+                        subtitle: data.subtitle || "Prof. V. Kamakoti",
+                        image: (data.images && data.images.length > 0) ? data.images[0] : "https://upload.wikimedia.org/wikipedia/commons/e/e6/V_Kamakoti.jpg"
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to fetch director message", err);
+            }
+        };
+        fetchContent();
+    }, []);
+
     return (
-        <section className="py-16 bg-white border-t border-gray-100">
+        <section className="py-20 bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 transition-colors duration-300">
             <div className="container mx-auto px-4">
 
                 {/* Section Title */}
-                <div className="mb-8 flex items-center">
-                    <div className="w-1 h-8 bg-black mr-3"></div>
-                    <div className="w-1 h-8 bg-iitm-maroon mr-3"></div>
-                    <h2 className="text-3xl font-sans text-gray-900">Message from the Director</h2>
+                <div className="mb-12 flex items-center">
+                    <div className="w-1.5 h-10 bg-black dark:bg-gray-400 mr-3"></div>
+                    <div className="w-1.5 h-10 bg-gcem-maroon dark:bg-gcem-gold mr-3"></div>
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white tracking-tight">{content.title}</h2>
                 </div>
 
-                {/* Content Area */}
-                <div className="text-gray-700 leading-relaxed text-base font-light text-justify">
-                    {/* Image floated left for text wrap */}
-                    <div className="float-left mr-8 mb-4">
-                        <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/e/e6/V_Kamakoti.jpg"
-                            alt="Prof. V. Kamakoti"
-                            className="w-64 h-auto rounded shadow-sm"
-                            onError={(e) => {
-                                e.target.src = "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"; // Fallback professional portrait
-                            }}
-                        />
+                {/* Content Area - Responsive Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+
+                    {/* Image Column */}
+                    <div className="lg:col-span-4 xl:col-span-3">
+                        <div className="relative group">
+                            <div className="absolute -inset-1 bg-gcem-maroon dark:bg-gcem-gold rounded-lg blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+                            <img
+                                src={content.image}
+                                alt={content.subtitle}
+                                className="relative w-full h-auto rounded-lg shadow-xl dark:shadow-none dark:border-2 dark:border-gray-800 transition-all duration-300"
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80";
+                                }}
+                            />
+                            <div className="mt-6 p-4 border-l-4 border-gcem-maroon dark:border-gcem-gold bg-gray-50 dark:bg-gray-900 transition-colors">
+                                <p className="text-gcem-maroon dark:text-gcem-gold font-extrabold text-xl tracking-wide">
+                                    {content.subtitle}
+                                </p>
+                                <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mt-1 uppercase tracking-widest">Director, GCEM</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <p className="mb-4">
-                        <strong className="text-gray-900">Greetings to all!</strong>
-                    </p>
-
-                    <p className="mb-4">
-                        It is with great pleasure that I write this in the capacity of the Director of this prestigious institute. I thank all the faculty members, students, and staff of IIT Madras for their continuing efforts every day in keeping this distinguished institute of national importance at the top of the ranking scales, year after year.
-                    </p>
-
-                    <p className="mb-4">
-                        The role of a campus in ensuring quality learning is of great significance and IIT Madras, which already has a world-class campus, will now ensure it is further infused with the spirit of inclusivity, by celebrating the pluralism of cultures, nationalities, and personalities in a global world. We envision our campus to reflect the ethos of innovation, entrepreneurship, and dynamism of spirit. Each IITian should foster an endless, restless quest to look for solutions to real-world problems thereby contributing to the society we live in and helping our nation truly be "atma-nirbhar" (self-reliant). I envisage the good presence of IIT Madras to be perceptibly felt far beyond the walls of our campus, wherein every corner of our country and thereby the world, is able to tangibly feel the difference we intend to make to society with our leading innovations combined with our determined efforts to make the world a better place to live in.
-                    </p>
-
-                    <p className="mb-4">
-                        Industry should be able to sit up and take notice of the impact we make and we should strive to ensure that our students continue to become part of global corporations and governments alike. As is said - change should be from within the system by being part of it and not exclusive to the system itself. It is also very important to bear in mind that consistency is key to maintaining excellence. The fact that we are #1 in National ranking is indeed a time to rejoice but not to relax.
-                    </p>
-
-                    <p className="mb-4">
-                        A parallel area of focus should also be the micro-issues that impact the immediate society around us. These could be at a local level, or perhaps even at a community level. We must invest time to work on those problems and come up with feasible solutions. Giving back to society we operate in is a crucial guiding principle we must all bear in mind at all times. I re-affirm my commitment which I've made to ensure enhanced focus on local issues of relevance.
-                    </p>
-
-                    <p className="mb-8">
-                        To conclude, I once again welcome you to this great centre of learning where the world amalgamates. Let us all continue to hold the torch high of IIT Madras as we look in to the future.
-                    </p>
-
-                    <p className="text-iitm-maroon font-bold text-lg">
-                        Prof. V. Kamakoti
-                    </p>
+                    {/* Text Column */}
+                    <div className="lg:col-span-8 xl:col-span-9">
+                        <div className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg font-light text-justify transition-colors">
+                            <div className="mb-8 whitespace-pre-line last:mb-0">
+                                {content.body}
+                                {!content.body && (
+                                    <p className="italic text-gray-400 dark:text-gray-500">Loading message content...</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --color-iitm-maroon: #800000;
-  --color-iitm-gold: #FFD700;
-  --color-iitm-gray: #f4f4f4;
+  --color-gcem-maroon: #800000;
+  --color-gcem-gold: #FFD700;
+  --color-gcem-gray: #f4f4f4;
   --font-sans: Inter, sans-serif;
 
   @keyframes marquee {

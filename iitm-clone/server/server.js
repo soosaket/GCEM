@@ -1,77 +1,200 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const mongoose = require('mongoose');
+const multer = require('multer');
+const fs = require('fs');
+require('dotenv').config();
+
+// Import Models
+const Content = require('./models/Content');
+const News = require('./models/News');
+const Gallery = require('./models/Gallery');
+const Department = require('./models/Department');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://gcem.vercel.app',
+    'https://gcem-website.vercel.app' // Fallback if user's desired name is taken
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        // allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true
+}));
 app.use(express.json());
 
-// Mock Data
-const newsData = [
-    {
-        id: 1,
-        title: "IIT Madras tops NIRF Rankings 2024",
-        date: "July 15, 2024",
-        category: "Awards",
-        image: "https://via.placeholder.com/300x200",
-        summary: "IIT Madras retains the top spot in the overall category for the sixth consecutive year."
-    },
-    {
-        id: 2,
-        title: "New Centre for Quantum Information launched",
-        date: "July 12, 2024",
-        category: "Research",
-        image: "https://via.placeholder.com/300x200",
-        summary: "A state-of-the-art facility to advance research in quantum computing and communication."
-    },
-    {
-        id: 3,
-        title: "Convocation 2024 held with grandeur",
-        date: "July 10, 2024",
-        category: "Events",
-        image: "https://via.placeholder.com/300x200",
-        summary: "Over 2500 students graduated in the 61st convocation ceremony."
-    }
-];
+// Serve uploaded files statically
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+app.use('/uploads', express.static(uploadDir));
 
-const eventsData = [
-    {
-        id: 1,
-        title: "International Conference on AI",
-        date: "Aug 05, 2024",
-        location: "ICSR Hall",
-        time: "10:00 AM"
+// Database Connection
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/dce-clone')
+    .then(() => console.log('MongoDB Connected'))
+    .catch(err => console.error('MongoDB connection error:', err));
+
+// Multer Storage Setup
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
     },
-    {
-        id: 2,
-        title: "Research Park Open House",
-        date: "Aug 12, 2024",
-        location: "IITM Research Park",
-        time: "09:00 AM"
-    },
-    {
-        id: 3,
-        title: "Alumni Meet 2024",
-        date: "Sept 01, 2024",
-        location: "OAT",
-        time: "05:00 PM"
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
     }
-];
+});
+const upload = multer({ storage });
 
 // Routes
-app.get('/api/news', (req, res) => {
-    res.json(newsData);
+
+// --- Image Upload ---
+app.post('/api/upload', upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+    }
+    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    res.json({ imageUrl });
 });
 
-app.get('/api/events', (req, res) => {
-    res.json(eventsData);
+// --- News API ---
+app.get('/api/news', async (req, res) => {
+    try {
+        const news = await News.find().sort({ createdAt: -1 });
+        res.json(news);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
+
+app.post('/api/news', async (req, res) => {
+    try {
+        const newNews = new News(req.body);
+        const savedNews = await newNews.save();
+        res.status(201).json(savedNews);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+app.delete('/api/news/:id', async (req, res) => {
+    try {
+        await News.findByIdAndDelete(req.params.id);
+        res.json({ message: 'News deleted' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// --- Gallery API ---
+app.get('/api/gallery', async (req, res) => {
+    try {
+        const photos = await Gallery.find().sort({ createdAt: -1 });
+        res.json(photos);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.post('/api/gallery', async (req, res) => {
+    try {
+        const newPhoto = new Gallery(req.body);
+        const savedPhoto = await newPhoto.save();
+        res.status(201).json(savedPhoto);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+app.delete('/api/gallery/:id', async (req, res) => {
+    try {
+        await Gallery.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Photo deleted' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// --- Departments API ---
+app.get('/api/departments', async (req, res) => {
+    try {
+        const departments = await Department.find().sort({ createdAt: -1 });
+        res.json(departments);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.post('/api/departments', async (req, res) => {
+    try {
+        const newDept = new Department(req.body);
+        const savedDept = await newDept.save();
+        res.status(201).json(savedDept);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+app.delete('/api/departments/:id', async (req, res) => {
+    try {
+        await Department.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Department deleted' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// --- Content API ---
+app.get('/api/content/:section', async (req, res) => {
+    try {
+        const content = await Content.findOne({ section: req.params.section });
+        res.json(content || {});
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.post('/api/content', async (req, res) => {
+    try {
+        const { section } = req.body;
+        const updatedContent = await Content.findOneAndUpdate(
+            { section },
+            req.body,
+            { new: true, upsert: true }
+        );
+        res.json(updatedContent);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// --- Admin Login (Simple) ---
+app.post('/api/admin/login', (req, res) => {
+    const { password } = req.body;
+    // Hardcoded password for "Zero Code" simplicity
+    if (password === (process.env.ADMIN_PASSWORD || 'admin123')) {
+        res.json({ success: true, token: 'frontend-only-token' });
+    } else {
+        res.status(401).json({ success: false, message: 'Invalid password' });
+    }
+});
+
 
 app.get('/', (req, res) => {
-    res.send('IIT Madras Clone API is running');
+    res.send('GEC Madhubani API is running with MongoDB');
 });
 
 // Start Server

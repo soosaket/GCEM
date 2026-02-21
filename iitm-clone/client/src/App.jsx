@@ -1,53 +1,39 @@
 import React from 'react';
-import Navbar from './components/Navbar';
-import TopBar from './components/TopBar';
-import HeroSection from './components/HeroSection';
-import NewsSection from './components/NewsSection';
-import StudyAtIITM from './components/StudyAtIITM';
-import DirectorMessage from './components/DirectorMessage';
-import CampusLife from './components/CampusLife';
-import Announcements from './components/Announcements';
-import Footer from './components/Footer';
+import { Routes, Route } from 'react-router-dom';
+
+// Layouts & Pages
+import PublicLayout from './components/PublicLayout';
+import Home from './components/Home';
+import GalleryPage from './components/GalleryPage';
+
+// Admin Components
+import Login from './admin/Login';
+import AdminLayout from './admin/AdminLayout';
+import Dashboard from './admin/Dashboard';
+import NewsManager from './admin/NewsManager';
+import GalleryManager from './admin/GalleryManager';
+import ContentManager from './admin/ContentManager';
+import DepartmentManager from './admin/DepartmentManager';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
-      <TopBar />
-      <Navbar />
-      <Announcements />
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<PublicLayout />}>
+        <Route index element={<Home />} />
+        <Route path="gallery" element={<GalleryPage />} />
+      </Route>
 
-      <main className="flex-grow">
-        <HeroSection />
-        <NewsSection />
-        <StudyAtIITM />
-        <DirectorMessage />
-        <CampusLife />
-
-        {/* Additional Stats Section Placeholder */}
-        <section className="bg-iitm-maroon py-16 text-white text-center">
-          <div className="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-4xl font-bold mb-2">16</h3>
-              <p className="text-iitm-gold uppercase text-sm tracking-widest">Departments</p>
-            </div>
-            <div>
-              <h3 className="text-4xl font-bold mb-2">600+</h3>
-              <p className="text-iitm-gold uppercase text-sm tracking-widest">Faculty</p>
-            </div>
-            <div>
-              <h3 className="text-4xl font-bold mb-2">10,000+</h3>
-              <p className="text-iitm-gold uppercase text-sm tracking-widest">Students</p>
-            </div>
-            <div>
-              <h3 className="text-4xl font-bold mb-2">100+</h3>
-              <p className="text-iitm-gold uppercase text-sm tracking-widest">Patents/Year</p>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <Footer />
-    </div>
+      {/* Admin Routes */}
+      <Route path="/admin/login" element={<Login />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="news" element={<NewsManager />} />
+        <Route path="gallery" element={<GalleryManager />} />
+        <Route path="departments" element={<DepartmentManager />} />
+        <Route path="content" element={<ContentManager />} />
+      </Route>
+    </Routes>
   );
 }
 
