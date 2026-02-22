@@ -107,15 +107,15 @@ const Navbar = () => {
                         </div>
                     </div>
 
-                    {/* Mobile Menu Toggle */}
+                    {/* Mobile Menu Toggle - Swapped Positions */}
                     <div className="lg:hidden flex justify-between items-center py-3">
                         <div className="flex items-center">
-                            <span className="font-bold text-gray-800 dark:text-gray-200 mr-4">Menu</span>
-                            <ThemeToggle />
+                            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-800 dark:text-gray-200 mr-4">
+                                {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+                            </button>
+                            <span className="font-bold text-gray-800 dark:text-gray-200">Menu</span>
                         </div>
-                        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-800 dark:text-gray-200">
-                            {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-                        </button>
+                        <ThemeToggle />
                     </div>
                 </div>
 
