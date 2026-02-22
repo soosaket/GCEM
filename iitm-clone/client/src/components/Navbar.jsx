@@ -30,25 +30,29 @@ const Navbar = () => {
         <div className="bg-white dark:bg-gray-950 w-full z-40 relative transition-colors duration-300">
             {/* Branding Section (Middle Bar) */}
             <div className="container mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 transition-colors duration-300">
-                {/* Left: GEC Logo */}
-                <div className="flex items-center mb-4 md:mb-0">
+                {/* Left: GEC Logo & Title */}
+                <div className="flex items-center w-full md:w-auto">
                     <img
                         src="/gcemlogo.png"
-                        alt="Government Engineering College Madhubani Logo"
-                        className="h-24 mr-4 dark:brightness-110"
+                        alt="GCEM Logo"
+                        className="h-16 md:h-24 mr-3 md:mr-4 dark:brightness-110"
                     />
-                    <div className="text-gray-800 dark:text-gray-100">
-                        <h1 className="text-2xl font-bold leading-none text-gray-900 dark:text-white">Government Engineering College Madhubani</h1>
-                        <h2 className="text-sm font-medium text-blue-600 dark:text-gcem-gold mt-1">( Dept. of Science, Technology & Technical Education, Govt. Of Bihar )</h2>
+                    <div className="text-gray-800 dark:text-gray-100 flex-1">
+                        <h1 className="text-lg md:text-2xl font-bold leading-tight text-gray-900 dark:text-white">
+                            Government Engineering College Madhubani
+                        </h1>
+                        <h2 className="text-[10px] md:text-sm font-medium text-blue-600 dark:text-gcem-gold mt-1 line-clamp-1 md:line-clamp-none">
+                            ( Dept. of Science, Technology & Technical Education, Govt. Of Bihar )
+                        </h2>
                     </div>
                 </div>
 
-                {/* Right: G20, IoE, Actions */}
-                <div className="flex items-center space-x-6">
+                {/* Right: G20 & Actions (Hidden on very small screens for cleanliness) */}
+                <div className="hidden xs:flex items-center space-x-4 md:space-x-6 mt-3 md:mt-0">
                     <img
                         src="/G20.jpg?v=1"
                         alt="G20 Logo"
-                        className="h-20 dark:grayscale dark:invert dark:opacity-80"
+                        className="h-12 md:h-20 dark:grayscale dark:invert dark:opacity-80"
                     />
                     <div className="hidden xl:flex border border-red-600 dark:border-gcem-gold text-red-600 dark:text-gcem-gold px-3 py-1 rounded text-sm font-semibold items-center">
                         An Institute of Eminence
@@ -117,17 +121,25 @@ const Navbar = () => {
 
                 {/* Mobile Menu Dropdown */}
                 {isMobileMenuOpen && (
-                    <div className="lg:hidden bg-white dark:bg-gray-900 shadow-lg border-t border-gray-100 dark:border-gray-800">
-                        {navLinks.map((link) => (
-                            <a
-                                key={link.name}
-                                href={link.href}
-                                className="block px-4 py-3 border-b border-gray-100 dark:border-gray-800 text-gray-800 dark:text-gray-200 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gcem-maroon dark:hover:text-gcem-gold"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                {link.name}
-                            </a>
-                        ))}
+                    <div className="lg:hidden bg-white dark:bg-gray-900 shadow-2xl border-t border-gray-100 dark:border-gray-800 animate-in slide-in-from-top duration-300">
+                        <div className="py-2 px-2">
+                            {navLinks.map((link) => (
+                                <a
+                                    key={link.name}
+                                    href={link.href}
+                                    className="flex justify-between items-center px-4 py-3 rounded-lg mb-1 text-gray-800 dark:text-gray-200 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gcem-maroon dark:hover:text-gcem-gold transition-colors"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    <span>{link.name}</span>
+                                    {link.hasDropdown && <FaChevronDown size={12} className="text-gray-400" />}
+                                </a>
+                            ))}
+                            <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 px-4 pb-4">
+                                <a href="#" className="block text-center bg-gcem-maroon text-white py-3 rounded-lg font-bold shadow-lg">
+                                    Give to GCEM
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 )}
             </nav>
