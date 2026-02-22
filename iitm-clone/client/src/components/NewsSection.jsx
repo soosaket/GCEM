@@ -59,11 +59,16 @@ const NewsSection = () => {
     return (
         <section className="py-16 bg-white dark:bg-gray-950 transition-colors duration-300">
             <div className="container mx-auto px-4">
-                <div className="flex justify-between items-center mb-10 border-b border-gray-200 dark:border-gray-800 pb-4">
-                    <h2 className="text-3xl font-bold text-gray-800 dark:text-white uppercase tracking-wide">
-                        <span className="border-b-4 border-gcem-maroon dark:border-gcem-gold pb-4">News &</span> Updates
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-gray-200 dark:border-gray-800 pb-4 gap-4">
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white uppercase tracking-wide leading-tight">
+                        <span className="relative inline-block pb-2">
+                            News & Updates
+                            <span className="absolute bottom-0 left-0 w-1/2 h-1 bg-gcem-maroon dark:bg-gcem-gold"></span>
+                        </span>
                     </h2>
-                    <a href="#" className="text-gcem-maroon dark:text-gcem-gold font-semibold hover:underline">View All News</a>
+                    <a href="#" className="text-gcem-maroon dark:text-gcem-gold font-semibold hover:underline text-sm md:text-base">
+                        View All News
+                    </a>
                 </div>
 
                 {loading ? (
